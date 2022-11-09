@@ -1,0 +1,57 @@
+.container_proposal_vote {
+    width: 450px;
+    height: 230px;
+    position: fixed;
+    left: 530px;
+    top: 50px;
+    padding: 10px;
+    background: #F2F3F4;
+}
+
+.container_user{
+    width: 450px;
+    height: 600px;
+    position:fixed;
+    left: 50px;
+    top: 50px;
+    padding: 10px;
+    background: #F2F3F4;
+}
+.container_proposal_list{
+    width: 450px;
+    height: 600px;
+    position:fixed;
+    left: 1010px;
+    top: 50px;
+    padding: 10px;
+    background: #F2F3F4;
+}
+
+.container_proposal_create{
+    width: 450px;
+    height: 340px;
+    position:fixed;
+    left: 530px;
+    top: 310px;
+    padding: 10px;
+    background: #F2F3F4;
+}
+
+
+.operation {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    margin-top: 20px;
+}
+
+.buttons {
+    height: 120px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
