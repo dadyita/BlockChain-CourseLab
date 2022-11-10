@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.9;
 import "./StuERC20.sol";
-
+import "./StuERC721.sol";
 // Uncomment this line to use console.log
-// import "hardhat/console.sol";
+ //import "hardhat/console.sol";
 
 // vote costs 1
 // create costs 3
@@ -33,10 +33,12 @@ contract StudentSocietyDAO {
     }
     uint16 public countProposal;
     stuERC20 public studentERC20;
+    stuERC721 public studentERC721;
     mapping(uint256 => Proposal) public proposals;
-
+    mapping(address=>uint256) public passCount;
     constructor() {
         studentERC20 = new stuERC20("ZjuToken", "zt");
+        studentERC721 = new stuERC721("a", "b");
     }
 
     function createProposal(uint256 end, string memory name) public {
@@ -112,8 +114,10 @@ contract StudentSocietyDAO {
         return proposals[index].pass;
     }
 
-    function expire(uint256 index) public returns (uint256) {
-        uint256 award;
+    function fPassCount(address index) public view returns(uint256){
+        return (passCount[index]);
+    }
+    function expire(uint256 index) public {
         if (
             proposals[index].agree > proposals[index].against &&
             proposals[index].pass == false
@@ -122,8 +126,8 @@ contract StudentSocietyDAO {
                 proposals[index].proposer,
                 proposals[index].agree + CREATE_AMOUNT
             );
+            passCount[proposals[index].proposer]++;
         }
         proposals[index].pass = true;
-        return (award);
     }
 }

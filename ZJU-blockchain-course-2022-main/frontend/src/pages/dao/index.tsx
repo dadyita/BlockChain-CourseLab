@@ -2,7 +2,7 @@ import { Button, Image, Input, List } from 'antd';
 import { Header } from "../../asset";
 import { UserOutlined } from "@ant-design/icons";
 import { useEffect, useState } from 'react';
-import { daoContract, myERC20Contract, web3 } from "../../utils/contracts";
+import { daoContract, myERC20Contract, web3, myERC721Contract } from "../../utils/contracts";
 import './index.css';
 import { workerData } from 'worker_threads';
 import moment, { Moment } from 'moment'
@@ -15,11 +15,13 @@ const LotteryPage = () => {
     var proposalEnd: string
     const [account, setAccount] = useState('')
     const [accountBalance, setAccountBalance] = useState(0)
+    const [awardBalance,setAwardBalance]=useState(0)
     const [voteAmount, setVoteAmount] = useState(0)
     const [countProposal, setCountProposal] = useState(0)
     const [createAmount, setCreateAmount] = useState(0)
     const [proposalName, setProposalName] = useState(0)
     const [proposalIndex, setProposalIndex] = useState(0)
+    const [passCount, setPassCount] = useState(0)
     useEffect(() => {
         // 初始化检查用户是否已经连接钱包
         // 查看window对象里是否存在ethereum（metamask安装后注入的）对象
@@ -47,7 +49,6 @@ const LotteryPage = () => {
                 setVoteAmount(va)
                 const cp = await daoContract.methods.countProposal().call()
                 setCountProposal(cp)
-
             } else {
                 alert('Contract not exists.')
             }
@@ -59,6 +60,8 @@ const LotteryPage = () => {
             if (myERC20Contract) {
                 const ab = await myERC20Contract.methods.balanceOf(account).call()
                 setAccountBalance(ab)
+                const awb=await myERC721Contract.methods.balanceOf(account).call()
+                setAwardBalance(awb)
             } else {
                 alert('Contract not exists.')
             }
@@ -68,6 +71,37 @@ const LotteryPage = () => {
             getAccountInfo()
         }
     }, [account])
+    useEffect(() => {
+        const award = async () => {
+            if (account === '') {
+                alert('You have not connected wallet yet.')
+                return
+            }
+            if (daoContract && myERC721Contract) {
+                try {
+                    const p = await daoContract.methods.fPassCount(account).call()
+                    setPassCount(p)
+                    if (passCount >= 3) {
+                        try {
+                            await myERC721Contract.methods.awardPlayer().send({
+                                from: account
+                            })
+                            alert('Your proposal has passed three.')
+                        } catch (error: any) {
+                            alert(error.message)
+                        }
+                    }
+                }
+                catch (error: any) {
+                    alert(error.message)
+                }
+            }
+            else {
+                alert('Contract not exists.')
+            }
+        }
+        award()
+    }, [account])
 
     const getProposalInfo = async () => {
         if (daoContract) {
@@ -75,12 +109,10 @@ const LotteryPage = () => {
             for (; i < countProposal; i++) {
                 var et = await daoContract.methods.endTime(i).call()
                 var p = await daoContract.methods.ifPass(i).call()
-                if (et < Date.parse(moment().format('YYYY-MM-DD HH:mm:ss'))&&p==false) {
+                if (et < Date.parse(moment().format('YYYY-MM-DD HH:mm:ss')) && p == false) {
                     try {
                         await myERC20Contract.methods.approve(daoContract.options.address, 10).send({ from: account })
-                        await daoContract.methods.expire(i).send({
-                            from: account
-                        })
+                        await daoContract.methods.expire(i).send({ from: account })
                     } catch (error: any) {
                         alert(error.message)
                     }
@@ -229,6 +261,8 @@ const LotteryPage = () => {
                     {account === '' && <Button onClick={onClickConnectWallet}>连接钱包</Button>}
                     <Button onClick={onClaimTokenAirdrop}>领取空投</Button>
                     <div>当前用户拥有浙大币数量：{account === '' ? 0 : accountBalance}</div>
+                    <div>当前用户通过的合约数：{passCount}</div>
+                    <div>{awardBalance==0? "":"您已经领取浙大纪念品"}</div>
                 </div>
             </div>
             <div className='container_proposal_vote'>
@@ -243,6 +277,7 @@ const LotteryPage = () => {
                 <h1>提案列表</h1>
                 <div>序号按照提交时间从0开始</div>
                 <div>当前总提案数：{countProposal}</div>
+                <div>点击"检查提案"按钮检查提案是否通过</div>
                 <Button onClick={getProposalInfo}>检查提案</Button>
             </div>
             <div className='container_proposal_create'>
