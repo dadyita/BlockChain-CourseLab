@@ -38,7 +38,7 @@ contract StudentSocietyDAO {
     mapping(address=>uint256) public passCount;
     constructor() {
         studentERC20 = new stuERC20("ZjuToken", "zt");
-        studentERC721 = new stuERC721("a", "b");
+        studentERC721 = new stuERC721();
     }
 
     function createProposal(uint256 end, string memory name) public {

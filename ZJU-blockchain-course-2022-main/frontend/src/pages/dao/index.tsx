@@ -15,7 +15,7 @@ const LotteryPage = () => {
     var proposalEnd: string
     const [account, setAccount] = useState('')
     const [accountBalance, setAccountBalance] = useState(0)
-    const [awardBalance,setAwardBalance]=useState(0)
+    const [awardBalance, setAwardBalance] = useState(0)
     const [voteAmount, setVoteAmount] = useState(0)
     const [countProposal, setCountProposal] = useState(0)
     const [createAmount, setCreateAmount] = useState(0)
@@ -49,6 +49,8 @@ const LotteryPage = () => {
                 setVoteAmount(va)
                 const cp = await daoContract.methods.countProposal().call()
                 setCountProposal(cp)
+                const p = await daoContract.methods.fPassCount(account).call()
+                setPassCount(p)
             } else {
                 alert('Contract not exists.')
             }
@@ -60,8 +62,10 @@ const LotteryPage = () => {
             if (myERC20Contract) {
                 const ab = await myERC20Contract.methods.balanceOf(account).call()
                 setAccountBalance(ab)
-                const awb=await myERC721Contract.methods.balanceOf(account).call()
+                const awb = await myERC721Contract.methods.balanceOf(account).call()
                 setAwardBalance(awb)
+                const p = await daoContract.methods.fPassCount(account).call()
+                setPassCount(p)
             } else {
                 alert('Contract not exists.')
             }
@@ -71,37 +75,34 @@ const LotteryPage = () => {
             getAccountInfo()
         }
     }, [account])
-    useEffect(() => {
-        const award = async () => {
-            if (account === '') {
-                alert('You have not connected wallet yet.')
-                return
-            }
-            if (daoContract && myERC721Contract) {
-                try {
-                    const p = await daoContract.methods.fPassCount(account).call()
-                    setPassCount(p)
-                    if (passCount >= 3) {
-                        try {
-                            await myERC721Contract.methods.awardPlayer().send({
-                                from: account
-                            })
-                            alert('Your proposal has passed three.')
-                        } catch (error: any) {
-                            alert(error.message)
-                        }
+    const award = async () => {
+        if (account === '') {
+            alert('You have not connected wallet yet.')
+            return
+        }
+        if (daoContract && myERC721Contract) {
+            try {
+                if (passCount >= 3) {
+                    try {
+                        await myERC721Contract.methods.awardPlayer().send({
+                            from: account
+                        })
+                        alert('Your proposal has passed three.')
+                    } catch (error: any) {
+                        alert(error.message)
                     }
                 }
-                catch (error: any) {
-                    alert(error.message)
-                }
+                else
+                alert('Your proposal has not passed enough.')
             }
-            else {
-                alert('Contract not exists.')
+            catch (error: any) {
+                alert(error.message)
             }
         }
-        award()
-    }, [account])
+        else {
+            alert('Contract not exists.')
+        }
+    }
 
     const getProposalInfo = async () => {
         if (daoContract) {
@@ -262,7 +263,8 @@ const LotteryPage = () => {
                     <Button onClick={onClaimTokenAirdrop}>领取空投</Button>
                     <div>当前用户拥有浙大币数量：{account === '' ? 0 : accountBalance}</div>
                     <div>当前用户通过的合约数：{passCount}</div>
-                    <div>{awardBalance==0? "":"您已经领取浙大纪念品"}</div>
+                    <Button onClick={award}>领取纪念品</Button>
+                    <div>{awardBalance == 0 ? "" : "您已经领取浙大纪念品"}</div>
                 </div>
             </div>
             <div className='container_proposal_vote'>

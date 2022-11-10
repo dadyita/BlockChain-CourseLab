@@ -1,6 +1,8 @@
-## Blockchain-HW2
+[TOC]
 
-#### 项目分析
+# Blockchain-HW2
+
+## 项目分析
 
 主要分为以下功能模块
 
@@ -26,7 +28,7 @@
 
 
 
-#### 如何运行
+## 如何运行
 
 1. 打开并运行ganache，将私钥复制进ZJU-blockchain-course-2022-main\contracts\hardhat.config.ts文件下
 
@@ -83,4 +85,70 @@
     ![image-20221110060722614](C:\Users\zhang\AppData\Roaming\Typora\typora-user-images\image-20221110060722614.png)
 
     ![image-20221110060808088](C:\Users\zhang\AppData\Roaming\Typora\typora-user-images\image-20221110060808088.png)
+
+## BONUS
+
+要求：提案通过超过三个的用户奖励纪念品通过erc721发放纪念品（TOKEN唯一）
+
+实现：新建stuERC721合约，引入纪念品
+
+如何运行：
+
+界面如下，点击领取纪念品时可在通过合约数超过三个的时候领取纪念品，并输出您已经成功领取纪念品
+
+![image-20221110193505997](C:\Users\zhang\AppData\Roaming\Typora\typora-user-images\image-20221110193505997.png)
+
+1. 先创建无效合约，检查通过合约数是否变化，发现没有变化
+
+    ![image-20221110193610768](C:\Users\zhang\AppData\Roaming\Typora\typora-user-images\image-20221110193610768.png)
+
+    ![image-20221110193634373](C:\Users\zhang\AppData\Roaming\Typora\typora-user-images\image-20221110193634373.png)
+
+2. 再创建新的提案，让提案通过，检查合约数量是否变化，发现成功变成1，尝试领取纪念品，失败
+
+    ![image-20221110193816983](C:\Users\zhang\AppData\Roaming\Typora\typora-user-images\image-20221110193816983.png)
+
+    ![image-20221110193836265](C:\Users\zhang\AppData\Roaming\Typora\typora-user-images\image-20221110193836265.png)
+
+    ![image-20221110193851267](C:\Users\zhang\AppData\Roaming\Typora\typora-user-images\image-20221110193851267.png)
+
+    ![image-20221110194722173](C:\Users\zhang\AppData\Roaming\Typora\typora-user-images\image-20221110194722173.png)
+
+3. 接着继续让和提案通过于此同时尝试领取纪念品，发现领不了，因为数量不到三个
+
+    ![image-20221110194030353](C:\Users\zhang\AppData\Roaming\Typora\typora-user-images\image-20221110194030353.png)
+
+4. 让提案通过3个并尝试领取，领取成功，刷新之后提示已经领取成功
+
+    ![image-20221110194120046](C:\Users\zhang\AppData\Roaming\Typora\typora-user-images\image-20221110194120046.png)
+
+    ![image-20221110194154048](C:\Users\zhang\AppData\Roaming\Typora\typora-user-images\image-20221110194154048.png)
+
+5. 切换账户，验证不同账户是否也能成功实现功能，发现账户通过合约数为0
+
+    ![image-20221110194414915](C:\Users\zhang\AppData\Roaming\Typora\typora-user-images\image-20221110194414915.png)
+
+6. 创建合约，并让合约通过后，检查通过合约数，发现变为1，成功
+
+    ![image-20221110194519400](C:\Users\zhang\AppData\Roaming\Typora\typora-user-images\image-20221110194519400.png)
+
+    ![image-20221110194542893](C:\Users\zhang\AppData\Roaming\Typora\typora-user-images\image-20221110194542893.png)
+
+    ![image-20221110194612105](C:\Users\zhang\AppData\Roaming\Typora\typora-user-images\image-20221110194612105.png)
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
 
